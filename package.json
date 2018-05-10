@@ -1,5 +1,6 @@
 {
   "name": "express-based-controller",
+  "private": true,
   "version": "1.0.0",
   "description": "OOP controller for ExpressJS with JoiValidators",
   "main": "dist/main.js",
