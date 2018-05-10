@@ -1,0 +1,22 @@
+{
+  "name": "express-based-controller",
+  "version": "1.0.0",
+  "description": "OOP controller for ExpressJS with JoiValidators",
+  "main": "dist/main.js",
+  "author": "42px",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.11.1",
+    "@types/joi": "^13.0.8",
+    "@types/node": "^10.0.6",
+    "compose-middleware": "^4.0.0",
+    "express": "^4.16.3",
+    "joi": "^13.3.0",
+    "typescript": "^2.8.3"
+  },
+  "devDependencies": {
+    "tslint": "^5.10.0",
+    "tslint-config-airbnb": "^5.8.0",
+    "tslint-language-service": "^0.9.9"
+  }
+}

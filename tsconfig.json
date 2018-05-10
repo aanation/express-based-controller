@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "target": "ES2015",
+        "module": "commonjs",
+        "outDir": "dist",
+        "removeComments": true, 
+        "moduleResolution": "node",
+        "strict": true,
+        "strictNullChecks": false,
+        "noImplicitAny": true,
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "declaration": true,
+        "declarationDir": "./types", 
+        "typeRoots" : ["./types", "./node_modules/@types"],
+        "types" : ["express", "joi", "node"],
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"]
+        },
+    },  
+    "include": [
+        "src/**/*"
+    ],
+    "compileOnSave": true
+}
