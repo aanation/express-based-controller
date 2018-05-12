@@ -149,7 +149,7 @@ const checkKeys = req => keys.includes(req.key);
     }
 ```
 
-After compilation **auth**, **accessControl** and **onError** will be called with every action (sayHello, sayBye). 
+After compilation **auth**, **accessControl** and **onError** will be called together with every action (sayHello, sayBye). 
 
 ## Joi-validator
 
@@ -205,7 +205,7 @@ class SomeController extends Controller {
 
 ## Wrapping Exceptions
 
-By default, Joi-validator throw's native Joi *ValidationError*:
+By default, Joi-validator throws native Joi *ValidationError*:
 
 ```typescript
 export interface JoiObject {
@@ -219,7 +219,7 @@ export interface ValidationError extends Error, JoiObject {
 }
 ```
 
-But, you can override **joiValidationFormatter** method:
+But you can override **joiValidationFormatter** method:
 
 ```typescript
 import { ValidationError as JoiValidationError } from 'joi';
@@ -253,7 +253,7 @@ class SomeController extends Controller {
 
 ## Compilation
 
-**compileActions** public method compiles's your actions, middlewares and access controll functions to a simple object, that has some middleware properties
+**compileActions** public method compiles your actions, middlewares and access controll functions to a simple object, that has some middleware properties
 
 For example:
 
@@ -295,7 +295,7 @@ app.get('/hello', compiledActions.hello);
 app.get('/bye', compiledActions.bye);
 ```
 
-Order of middlewares into action after compilation:
+Middleware order into action after compilation:
 
 1. global middlewares
 2. action middlewares
