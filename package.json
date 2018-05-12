@@ -5,6 +5,7 @@
   "main": "dist/main.js",
   "author": "42px",
   "license": "ISC",
+  "types": "./types/main.d.ts",
   "repository" : { 
     "type" : "git", 
     "url" : "https://github.com/aanation/express-based-controller.git"
