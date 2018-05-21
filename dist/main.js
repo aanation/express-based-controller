@@ -133,7 +133,7 @@ class Controller {
                 ? this.buildExpressErrorHandler(action.onError)
                 : emptyErrorHandler;
             const actionHandler = action.handler
-                ? this.buildActionMiddleware(action.handler)
+                ? this.buildActionMiddleware(action.handler).bind(this)
                 : emptyMiddleware;
             const resultMiddleware = compose_middleware_1.compose([
                 ...globalMiddlewares,
@@ -146,7 +146,7 @@ class Controller {
                 errorHandler,
                 globalErrorHandler
             ]);
-            compiledActions[actionName] = resultMiddleware.bind(this);
+            compiledActions[actionName] = resultMiddleware;
         });
         return compiledActions;
     }

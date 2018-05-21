@@ -191,7 +191,7 @@ export class Controller implements ExpressBasedController {
         ? this.buildExpressErrorHandler(action.onError)
         : emptyErrorHandler; 
       const actionHandler = action.handler 
-        ? this.buildActionMiddleware(action.handler)
+        ? this.buildActionMiddleware(action.handler).bind(this)
         : emptyMiddleware; 
 
 
@@ -207,7 +207,7 @@ export class Controller implements ExpressBasedController {
         globalErrorHandler
       ]);
 
-      compiledActions[actionName] = resultMiddleware.bind(this);
+      compiledActions[actionName] = resultMiddleware;
     }); 
 
     return compiledActions;
