@@ -135,7 +135,7 @@ class Controller {
             const actionHandler = action.handler
                 ? this.buildActionMiddleware(action.handler)
                 : emptyMiddleware;
-            compiledActions[actionName] = compose_middleware_1.compose([
+            const resultMiddleware = compose_middleware_1.compose([
                 ...globalMiddlewares,
                 ...middlewares,
                 globalAccessControl,
@@ -145,7 +145,8 @@ class Controller {
                 actionHandler,
                 errorHandler,
                 globalErrorHandler
-            ]).bind(this);
+            ]);
+            compiledActions[actionName] = resultMiddleware.bind(this);
         });
         return compiledActions;
     }

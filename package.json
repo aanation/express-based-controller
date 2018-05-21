@@ -1,6 +1,6 @@
 {
   "name": "express-based-controller",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "OOP controller for ExpressJS with JoiValidators",
   "main": "dist/main.js",
   "author": "42px",

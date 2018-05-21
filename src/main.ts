@@ -195,7 +195,7 @@ export class Controller implements ExpressBasedController {
         : emptyMiddleware; 
 
 
-      compiledActions[actionName] = compose<ExpressRequest, ExpressResponse, any>([
+      const resultMiddleware = compose<ExpressRequest, ExpressResponse, any>([
         ...globalMiddlewares,
         ...middlewares,
         globalAccessControl,
@@ -205,8 +205,9 @@ export class Controller implements ExpressBasedController {
         actionHandler,
         errorHandler,
         globalErrorHandler
-      ]).bind(this);
+      ]);
 
+      compiledActions[actionName] = resultMiddleware.bind(this);
     }); 
 
     return compiledActions;
