@@ -145,7 +145,7 @@ class Controller {
                 actionHandler,
                 errorHandler,
                 globalErrorHandler
-            ]);
+            ]).bind(this);
         });
         return compiledActions;
     }

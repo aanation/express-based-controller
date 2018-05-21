@@ -205,7 +205,7 @@ export class Controller implements ExpressBasedController {
         actionHandler,
         errorHandler,
         globalErrorHandler
-      ]);
+      ]).bind(this);
 
     }); 
 
