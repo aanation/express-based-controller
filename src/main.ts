@@ -136,7 +136,7 @@ export class Controller implements ExpressBasedController {
 
   private buildActionMiddleware(handler: ActionHandler) :ExpressHandler {
     return (req, res, next) => {
-      const result = handler(req, res);
+      const result = handler.call(this, req, res);
       if (result instanceof Promise) {
         result
         .then((actionResult:any) => {
@@ -153,6 +153,8 @@ export class Controller implements ExpressBasedController {
         res.json(result); 
       } else if (result) {
         res.end(result); 
+      } else {
+        res.end();
       }
     };
   }
@@ -191,7 +193,7 @@ export class Controller implements ExpressBasedController {
         ? this.buildExpressErrorHandler(action.onError)
         : emptyErrorHandler; 
       const actionHandler = action.handler 
-        ? this.buildActionMiddleware(action.handler).bind(this)
+        ? this.buildActionMiddleware(action.handler)
         : emptyMiddleware; 
 
 

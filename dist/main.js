@@ -83,7 +83,7 @@ class Controller {
     }
     buildActionMiddleware(handler) {
         return (req, res, next) => {
-            const result = handler(req, res);
+            const result = handler.call(this, req, res);
             if (result instanceof Promise) {
                 result
                     .then((actionResult) => {
@@ -103,6 +103,9 @@ class Controller {
             }
             else if (result) {
                 res.end(result);
+            }
+            else {
+                res.end();
             }
         };
     }
@@ -133,7 +136,7 @@ class Controller {
                 ? this.buildExpressErrorHandler(action.onError)
                 : emptyErrorHandler;
             const actionHandler = action.handler
-                ? this.buildActionMiddleware(action.handler).bind(this)
+                ? this.buildActionMiddleware(action.handler)
                 : emptyMiddleware;
             const resultMiddleware = compose_middleware_1.compose([
                 ...globalMiddlewares,
