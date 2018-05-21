@@ -93,6 +93,9 @@ class Controller {
                     else if (actionResult) {
                         res.end(actionResult);
                     }
+                    else {
+                        res.end();
+                    }
                 })
                     .catch((err) => {
                     next(err);

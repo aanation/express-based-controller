@@ -144,6 +144,8 @@ export class Controller implements ExpressBasedController {
             res.json(actionResult);
           } else if (actionResult) {
             res.end(actionResult);
+          } else {
+            res.end();
           }
         })
         .catch((err:any) => {
