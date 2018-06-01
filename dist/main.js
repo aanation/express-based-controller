@@ -20,7 +20,7 @@ class Controller {
     accessControlException() {
         return new Error('Access denied!');
     }
-    buildValudationMiddleware(schema) {
+    buildValidationMiddleware(schema) {
         return (req, res, next) => {
             const error = schema.validate(req.body).error;
             if (error) {
@@ -41,75 +41,40 @@ class Controller {
                     next(this.accessControlException());
                 }
             };
-            const result = accessControl(req);
-            if (typeof result === 'boolean') {
-                resolveMiddleware(result);
-            }
-            else if (result instanceof Promise) {
-                result
-                    .then((accessControlResult) => {
-                    resolveMiddleware(accessControlResult);
-                })
-                    .catch((err) => {
-                    next(err);
-                });
-            }
+            Promise
+                .resolve(accessControl(req))
+                .then((result) => resolveMiddleware(result))
+                .catch((err) => next(err));
         };
     }
     buildExpressErrorHandler(onError) {
         return (err, req, res, next) => {
             const result = onError(err, req, res);
-            if (result instanceof Promise) {
-                result
-                    .then((errorHandlerResult) => {
-                    if (errorHandlerResult && typeof errorHandlerResult === 'object') {
-                        res.json(errorHandlerResult);
-                    }
-                    else if (errorHandlerResult) {
-                        res.end(errorHandlerResult);
-                    }
-                })
-                    .catch((err) => {
-                    next(err);
-                });
-            }
-            else if (result && typeof result === 'object') {
-                res.json(result);
-            }
-            else if (result) {
-                res.end(result);
-            }
+            Promise
+                .resolve(result)
+                .then((errorHandler) => {
+                if (!errorHandler) {
+                    return;
+                }
+                res.json(errorHandler);
+            })
+                .catch((err) => next(err));
         };
     }
     buildActionMiddleware(handler) {
         return (req, res, next) => {
             const result = handler.call(this, req, res);
-            if (result instanceof Promise) {
-                result
-                    .then((actionResult) => {
-                    if (actionResult && typeof actionResult === 'object') {
-                        res.json(actionResult);
-                    }
-                    else if (actionResult) {
-                        res.end(actionResult);
-                    }
-                    else {
-                        res.end();
-                    }
-                })
-                    .catch((err) => {
-                    next(err);
-                });
-            }
-            else if (result && typeof result === 'object') {
-                res.json(result);
-            }
-            else if (result) {
-                res.end(result);
-            }
-            else {
-                res.end();
-            }
+            Promise
+                .resolve(result)
+                .then((actionResult) => {
+                if (!actionResult) {
+                    return;
+                }
+                res.json(actionResult);
+            })
+                .catch((err) => {
+                next(err);
+            });
         };
     }
     compileActions() {
@@ -117,7 +82,7 @@ class Controller {
         const emptyErrorHandler = (err, req, res, next) => { next(err); };
         const globalMiddlewares = this.middlewares || [];
         const globalValidator = this.validator
-            ? this.buildValudationMiddleware(this.validator)
+            ? this.buildValidationMiddleware(this.validator)
             : emptyMiddleware;
         const globalAccessControl = this.accessControl
             ? this.buildAccessControlMiddleware(this.accessControl)
@@ -130,7 +95,7 @@ class Controller {
             const action = this.actions[actionName];
             const middlewares = action.middlewares || [];
             const validator = action.validator
-                ? this.buildValudationMiddleware(action.validator)
+                ? this.buildValidationMiddleware(action.validator)
                 : emptyMiddleware;
             const accessControl = action.accessControl
                 ? this.buildAccessControlMiddleware(action.accessControl)

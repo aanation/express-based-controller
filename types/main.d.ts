@@ -41,7 +41,7 @@ export declare class Controller implements ExpressBasedController {
     onError?: ErrorHandler;
     joiValidationFormatter(error: JoiValidationError): any;
     accessControlException(): any;
-    private buildValudationMiddleware(schema);
+    private buildValidationMiddleware(schema);
     private buildAccessControlMiddleware(accessControl);
     private buildExpressErrorHandler(onError);
     private buildActionMiddleware(handler);
