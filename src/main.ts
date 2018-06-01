@@ -74,7 +74,7 @@ export class Controller implements ExpressBasedController {
     return new Error('Access denied!'); 
   }
 
-  private buildValudationMiddleware(schema: JoiSchema) :ExpressHandler {
+  private buildValidationMiddleware(schema: JoiSchema) :ExpressHandler {
     return (req, res, next) => {
       const error :JoiValidationError = schema.validate(req.body).error;
       if (error) {
@@ -95,69 +95,40 @@ export class Controller implements ExpressBasedController {
         }
       }; 
 
-      const result = accessControl(req); 
-      if (typeof result === 'boolean') {
-        resolveMiddleware(result); 
-      } else if (result instanceof Promise) {
-        result
-        .then((accessControlResult:any) => {
-          resolveMiddleware(accessControlResult); 
-        })
-        .catch((err:any) => {
-          next(err); 
-        });
-      }
-
+      Promise
+        .resolve(accessControl(req))
+        .then((result: any) => resolveMiddleware(result))
+        .catch((err: any) => next(err));
     }; 
   }
 
   private buildExpressErrorHandler(onError: ErrorHandler) :ExpressErrorHandler {
     return (err, req, res, next) => {
       const result = onError(err, req, res); 
-      if (result instanceof Promise) {
-        result
-        .then((errorHandlerResult:any) => {
-          if (errorHandlerResult && typeof errorHandlerResult === 'object') {
-            res.json(errorHandlerResult); 
-          } else if (errorHandlerResult) {
-            res.end(errorHandlerResult); 
-          }
+
+      Promise
+        .resolve(result)
+        .then((errorHandler: any) => {
+          if (!errorHandler) { return; }
+          res.json(errorHandler);
         })
-        .catch((err: any) => {
-          next(err);
-        });
-      } else if (result && typeof result === 'object') {
-        res.json(result); 
-      } else if (result) {
-        res.end(result); 
-      }
+        .catch((err: any) => next(err));
     }; 
   }
 
   private buildActionMiddleware(handler: ActionHandler) :ExpressHandler {
     return (req, res, next) => {
       const result = handler.call(this, req, res);
-      if (result instanceof Promise) {
-        result
-        .then((actionResult:any) => {
-          if (actionResult && typeof actionResult === 'object') {
-            res.json(actionResult);
-          } else if (actionResult) {
-            res.end(actionResult);
-          } else {
-            res.end();
-          }
+
+      Promise
+        .resolve(result)
+        .then((actionResult: any) => {
+          if (!actionResult) { return; }
+          res.json(actionResult);
         })
-        .catch((err:any) => {
-          next(err); 
+        .catch((err: any) => {
+          next(err);
         }); 
-      } else if (result && typeof result === 'object') {
-        res.json(result); 
-      } else if (result) {
-        res.end(result); 
-      } else {
-        res.end();
-      }
     };
   }
 
@@ -170,7 +141,7 @@ export class Controller implements ExpressBasedController {
 
     const globalMiddlewares = this.middlewares || []; 
     const globalValidator = this.validator 
-      ? this.buildValudationMiddleware(this.validator) 
+      ? this.buildValidationMiddleware(this.validator) 
       : emptyMiddleware;
     const globalAccessControl = this.accessControl
       ? this.buildAccessControlMiddleware(this.accessControl)
@@ -179,14 +150,13 @@ export class Controller implements ExpressBasedController {
       ? this.buildExpressErrorHandler(this.onError)
       : emptyErrorHandler;  
 
-
     const compiledActions: CompiledActions = {}; 
 
     Object.getOwnPropertyNames(this.actions).forEach((actionName: string) => {
       const action: ControllerAction = this.actions[actionName];
       const middlewares = action.middlewares || [];
       const validator = action.validator 
-        ? this.buildValudationMiddleware(action.validator)
+        ? this.buildValidationMiddleware(action.validator)
         : emptyMiddleware;
       const accessControl = action.accessControl 
         ? this.buildAccessControlMiddleware(action.accessControl)
