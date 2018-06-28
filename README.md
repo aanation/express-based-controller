@@ -1,7 +1,5 @@
 # Express based controller
 
-> **Unstable! Don't use it in production!**
-
 It's a simple class for writting your ExpressJS controllers in the OOP-style. 
 
 ## Usage example 
@@ -153,7 +151,7 @@ After compilation **auth**, **accessControl** and **onError** will be called tog
 
 ## Joi-validator
 
-If you set the validator, req.body will be validated by Joi-schema:
+If you set the validator, req will be validated by Joi-schema:
 
 local: 
 ```typescript
@@ -162,10 +160,12 @@ import { Controller } from 'express-based-controller';
  
 class SomeController extends Controller {
     @action({
-        validator: Joi.object().keys({
-            username: Joi.string().required(),
-            password: Joi.string().required()
-        }), 
+        validator: Joi.object({
+            body: Joi.object().keys({
+                username: Joi.string().required(),
+                password: Joi.string().required()
+            })
+        }).unknown(true), 
         onError: (err, req, res) => {
             return {
                 errors: true,
@@ -191,9 +191,11 @@ global:
 import { Controller } from 'express-based-controller';
  
 class SomeController extends Controller {
-    public validator = Joi.object().keys({
-        message: Joi.string().required()
-    }), 
+    public validator = Joi.object({
+        body: Joi.object().keys({
+            message: Joi.string().required()
+        })
+    }).unknown(true), 
     @action()
     sayHello(req, res, next) {
         return {

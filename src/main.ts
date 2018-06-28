@@ -13,7 +13,7 @@ export type AccessControlFunc = (req: ExpressRequest) => boolean|Promise<boolean
 export interface ControllerAction {
   // проверка доступа, вызывается сразу после валидатора 
   accessControl?: AccessControlFunc;
-  // джои схема для тела запроса
+  // джои схема для валидации запроса запроса
   validator?: JoiSchema; 
   // массив произвольных мидлвар, выполняющихся до основного экшена
   middlewares?: ExpressHandler[]; 
@@ -76,7 +76,7 @@ export class Controller implements ExpressBasedController {
 
   private buildValidationMiddleware(schema: JoiSchema) :ExpressHandler {
     return (req, res, next) => {
-      const error :JoiValidationError = schema.validate(req.body).error;
+      const error :JoiValidationError = schema.validate(req).error;
       if (error) {
         next(this.joiValidationFormatter(error)); 
       } else {

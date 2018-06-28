@@ -22,7 +22,7 @@ class Controller {
     }
     buildValidationMiddleware(schema) {
         return (req, res, next) => {
-            const error = schema.validate(req.body).error;
+            const error = schema.validate(req).error;
             if (error) {
                 next(this.joiValidationFormatter(error));
             }
